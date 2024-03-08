@@ -1,0 +1,80 @@
+
+# Importing packages
+import pandas as pd
+import matplotlib.pyplot as plt
+from math import sqrt
+import statsmodels.api as sm
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.arima_process import ArmaProcess
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+
+# Importing and reading csv file
+data="FRED_int_stk.csv"
+stock_and_bonds= pd.read_csv(data)
+stock_and_bonds.head()
+
+# Computing correlation using corr() and making scatter plot
+correlation = returns["SP500"].corr(returns["US10Y"])
+print("Correlation of stocks and interest rates: ", correlation)
+plt.scatter(returns["SP500"],returns["US10Y"])
+plt.show()
+
+# Converting the US10Y and SP500 series to a DataFrame
+US10Y = pd.DataFrame(stocks_and_bonds) 
+SP500 = pd.DataFrame(stocks_and_bonds) 
+
+# Creating new DataFrame US10Y_new and SP500_new by taking percentage change 
+US10Y_new = US10Y.pct_change()
+SP500_new = SP500.pct_change()
+
+# Eliminating the NaN in the data
+US10Y_new = US10Y_ret.dropna()
+SP500_new = sp500_ret.dropna()
+
+# Adding a constant to the DataFrame US10Y
+US10Y1 = sm.add_constant(US10Y)
+
+# Regressing SP500 on US10Y1
+result_ols = sm.OLS(SP500, US10Y1).fit()
+print(result_ols.summary())
+
+# ADF test on the series 
+results_us10_new = adfuller(US10Y_new)
+results_SP500_new = adfuller(SP500_new['Close'])
+print('The p-value of the test on returns is: ' + str(results_us10_new[1]))
+print('The p-value of the test on returns is: ' + str(results_SP500_new[1]))
+
+# Computing the ADF of the spread
+result_spread = adfuller(US10Y - SP500)
+print("The p-value for the ADF test on the spread is ", result_spread[1])
+
+# Plotting the autocorrelation function  of the interest rate
+fig = plot_acf(US10Y, alpha=1, lags=12, ax=axes[0])
+
+# Forecasting interst rates using an AR(1) model
+mod_ar1 = ARIMA(US10Y_new, order=(1,0,0))
+res_ar1 = mod.fit()
+print("The AIC for an AR(1) is: ", res_ar1.aic)
+# Plotting the data and the forecast
+fig, ax = plt.subplots()
+US10Y_new.plot(ax=ax)
+plot_predict(res, start=0, end="2027", alpha=None, ax=ax)
+plt.show()
+
+# Fitting the data to an AR(2) model and checking AIC:
+mod_ar2 = ARIMA(, order=(2,0,0))
+res_ar2 = mod_ar2.fit()
+print("The AIC for an AR(2) is: ", res_ar2.aic)
+
+# Fitting the data to an MA(1) model
+mod_ma1 = ARIMA(US10Y_new, order=(0,0,1))
+res_ma1 = mod1.fit()
+print(res_ma1.params[1])
+
+# Fitting the data to an ARMA(1,1) model:
+mod_arma11 = ARIMA(US10Y_new, order=(1,0,1))
+res_arma11 = mod_arma11.fit()
+print("The AIC for an ARMA(1,1) is: ", res_arma11.aic)
+
+
