@@ -29,8 +29,8 @@ US10Y_new = US10Y.pct_change()
 SP500_new = SP500.pct_change()
 
 # Eliminating the NaN in the data
-US10Y_new = US10Y_ret.dropna()
-SP500_new = sp500_ret.dropna()
+US10Y_new = US10Y_new.dropna()
+SP500_new = sp500_new.dropna()
 
 # Adding a constant to the DataFrame US10Y
 US10Y1 = sm.add_constant(US10Y)
